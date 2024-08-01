@@ -88,6 +88,9 @@ public class InboxFetcherService {
             }
 
             Date receivedDate = message.getReceivedDate();
+            if (receivedDate == null) {
+                receivedDate = new Date();
+            }
             email.setReceivedDate(receivedDate);
 
             handleEmailContent(message, email);
