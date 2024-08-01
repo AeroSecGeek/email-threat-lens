@@ -2,6 +2,7 @@ package com.aerosecgeek.emailthreatlensservice.modules.email;
 
 import com.aerosecgeek.emailthreatlensservice.core.event.EventPublisher;
 import com.aerosecgeek.emailthreatlensservice.core.event.model.EmailSavedEvent;
+import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
 import jakarta.mail.Address;
 import jakarta.mail.Header;
 import jakarta.mail.Message;

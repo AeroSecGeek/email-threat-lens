@@ -2,7 +2,7 @@ package com.aerosecgeek.emailthreatlensservice.facade.listener;
 
 import com.aerosecgeek.emailthreatlensservice.core.event.EventPublisher;
 import com.aerosecgeek.emailthreatlensservice.core.event.model.EmailSavedEvent;
-import com.aerosecgeek.emailthreatlensservice.modules.email.Email;
+import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;

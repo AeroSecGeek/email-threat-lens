@@ -1,6 +1,6 @@
 package com.aerosecgeek.emailthreatlensservice.core.event.model;
 
-import com.aerosecgeek.emailthreatlensservice.modules.email.Email;
+import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

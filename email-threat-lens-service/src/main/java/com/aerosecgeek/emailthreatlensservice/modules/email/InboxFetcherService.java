@@ -3,6 +3,8 @@ package com.aerosecgeek.emailthreatlensservice.modules.email;
 import com.aerosecgeek.emailthreatlensservice.core.event.EventPublisher;
 import com.aerosecgeek.emailthreatlensservice.core.event.model.EmailSavedEvent;
 import com.aerosecgeek.emailthreatlensservice.core.exception.AttachmentIsEmail;
+import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
+import com.aerosecgeek.emailthreatlensservice.modules.email.model.EmailHeader;
 import jakarta.mail.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,12 +81,11 @@ public class InboxFetcherService {
             email.setToAddress(message.getAllRecipients()[0].toString());
 
             // Extract and save headers
-            StringBuilder headerInfo = new StringBuilder();
             for (Enumeration<Header> e = message.getAllHeaders(); e.hasMoreElements();) {
                 Header header = e.nextElement();
-                headerInfo.append(header.getName()).append(": ").append(header.getValue()).append("\n");
+                EmailHeader emailHeader = new EmailHeader(header.getName(), header.getValue(),email);
+                email.getHeaders().add(emailHeader);
             }
-            email.setHeaders(headerInfo.toString());
 
             Date receivedDate = message.getReceivedDate();
             email.setReceivedDate(receivedDate);
