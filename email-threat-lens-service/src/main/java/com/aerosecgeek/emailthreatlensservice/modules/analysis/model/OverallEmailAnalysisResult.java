@@ -3,6 +3,7 @@ package com.aerosecgeek.emailthreatlensservice.modules.analysis.model;
 import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class OverallEmailAnalysisResult implements Serializable {
     @Serial
     private static final long serialVersionUID = -2346971114056550503L;
@@ -19,7 +21,7 @@ public class OverallEmailAnalysisResult implements Serializable {
     private UUID uuid;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email_id")
+    @JoinColumn(name = "email_uuid")
     private Email email;
 
     @Embedded

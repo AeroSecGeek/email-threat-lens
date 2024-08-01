@@ -46,7 +46,6 @@ public class InboxFetcherService {
         this.eventPublisher = eventPublisher;
     }
 
-    @Transactional
     public void fetchEmailsFromInbox() {
         Properties properties = new Properties();
         properties.put("mail.store.protocol", imapProtocol);
