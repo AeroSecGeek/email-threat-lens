@@ -1,5 +1,7 @@
 package com.aerosecgeek.emailthreatlensservice.modules.email;
 
+import com.aerosecgeek.emailthreatlensservice.core.event.EventPublisher;
+import com.aerosecgeek.emailthreatlensservice.core.event.model.EmailSavedEvent;
 import com.aerosecgeek.emailthreatlensservice.core.exception.AttachmentIsEmail;
 import jakarta.mail.*;
 import org.slf4j.Logger;
@@ -32,12 +34,14 @@ public class InboxFetcherService {
     private String imapProtocol;
 
     private final EmailRepository emailRepository;
+    private final EventPublisher eventPublisher;
 
     private final Logger logger = LoggerFactory.getLogger(InboxFetcherService.class);
 
     @Autowired
-    public InboxFetcherService(EmailRepository emailRepository) {
+    public InboxFetcherService(EmailRepository emailRepository, EventPublisher eventPublisher) {
         this.emailRepository = emailRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -67,7 +71,7 @@ public class InboxFetcherService {
         }
     }
 
-    private void saveEmail(Message message){
+    void saveEmail(Message message){
         try {
             Email email = new Email();
             email.setSubject(message.getSubject());
@@ -94,7 +98,8 @@ public class InboxFetcherService {
     private void handleEmailContent(Message message, Email email) throws Exception {
         try {
             email.setBody(extractContent(message));
-            emailRepository.save(email);
+            email=emailRepository.save(email);
+            eventPublisher.publishDomainEvent(new EmailSavedEvent(this, email));
         } catch (AttachmentIsEmail e) {
             // Do nothing
         }
