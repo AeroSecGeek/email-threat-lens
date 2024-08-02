@@ -6,13 +6,10 @@ import com.aerosecgeek.emailthreatlensservice.core.event.model.StartAnalysisEven
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.OverallEmailAnalysisResultService;
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.header.HeaderAnalysisService;
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.AnalysisStatus;
-import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.OverallEmailAnalysisResult;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.CompletableFuture;
 
 @Component
 @AllArgsConstructor

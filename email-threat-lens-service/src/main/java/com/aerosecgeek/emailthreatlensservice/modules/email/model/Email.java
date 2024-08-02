@@ -1,7 +1,6 @@
 package com.aerosecgeek.emailthreatlensservice.modules.email.model;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Type;
@@ -28,7 +27,7 @@ public class Email implements Serializable {
     //@Convert(converter = EmailHeadersConverter.class)
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
-    private Map<String, String> headers= new HashMap<>();
+    private List<EmailHeader> headers= new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String body;

@@ -20,7 +20,7 @@ public class OverallEmailAnalysisResult implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "email_uuid")
     private Email email;
 

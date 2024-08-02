@@ -8,6 +8,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ class EmailRepositoryTest {
         email.setToAddress("test2@test.ch");
         email.setSubject("Test");
         email.setBody("Test content");
-        email.setHeaders(new HashMap<>());
+        email.setHeaders(new ArrayList<>());
 
         // when
         Email savedEmail = emailRepository.save(email);
