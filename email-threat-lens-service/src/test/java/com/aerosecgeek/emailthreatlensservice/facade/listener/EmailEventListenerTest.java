@@ -1,6 +1,5 @@
 package com.aerosecgeek.emailthreatlensservice.facade.listener;
 
-import com.aerosecgeek.emailthreatlensservice.core.event.EventPublisher;
 import com.aerosecgeek.emailthreatlensservice.core.event.model.EmailSavedEvent;
 import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
 import org.junit.jupiter.api.Test;
@@ -8,6 +7,8 @@ import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,10 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("unittest")
 @Transactional
 @Rollback
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class EmailEventListenerTest {
     @Autowired
-    private EventPublisher eventPublisher;
+    private ApplicationEventPublisher eventPublisher;
 
     @SpyBean
     private EmailEventListener emailEventListener;
@@ -35,7 +37,7 @@ class EmailEventListenerTest {
         EmailSavedEvent emailSavedEvent = new EmailSavedEvent(this,email);
 
         // when
-        eventPublisher.publishDomainEvent(emailSavedEvent);
+        eventPublisher.publishEvent(emailSavedEvent);
 
         // then
         // Verify the listener was triggered

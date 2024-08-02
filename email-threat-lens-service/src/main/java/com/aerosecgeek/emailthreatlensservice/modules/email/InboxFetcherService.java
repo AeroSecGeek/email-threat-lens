@@ -70,7 +70,7 @@ public class InboxFetcherService {
         }
     }
 
-    void saveEmail(Message message){
+    public void saveEmail(Message message){
         try {
             Email email = new Email();
             email.setSubject(message.getSubject());

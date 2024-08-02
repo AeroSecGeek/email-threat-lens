@@ -6,10 +6,13 @@ import com.aerosecgeek.emailthreatlensservice.core.event.model.StartAnalysisEven
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.OverallEmailAnalysisResultService;
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.header.HeaderAnalysisService;
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.AnalysisStatus;
+import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.OverallEmailAnalysisResult;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @AllArgsConstructor
@@ -23,7 +26,7 @@ public class HeaderAnalysisListener {
     public void handleStartAnalysisEvent(StartAnalysisEvent event){
         var result = event.getResult();
         result.getHeaderAnalysisResult().setStatus(AnalysisStatus.IN_PROGRESS);
-        overallEmailAnalysisResultService.saveResult(result);
+        result = overallEmailAnalysisResultService.saveResult(result);
 
         var analysisResult = headerAnalysisService.analyzeHeaders(result.getEmail().getHeaders());
         result.getHeaderAnalysisResult().setStatus(AnalysisStatus.COMPLETED);
@@ -31,5 +34,6 @@ public class HeaderAnalysisListener {
         overallEmailAnalysisResultService.saveResult(result);
 
         eventPublisher.publishDomainEvent(new AnalysisCompletedEvent(this, result));
+
     }
 }
