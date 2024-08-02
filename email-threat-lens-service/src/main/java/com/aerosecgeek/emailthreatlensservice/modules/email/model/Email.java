@@ -1,14 +1,14 @@
 package com.aerosecgeek.emailthreatlensservice.modules.email.model;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Data
@@ -25,8 +25,10 @@ public class Email implements Serializable {
     private Date receivedDate;
     private String subject;
 
-    @OneToMany(mappedBy = "email", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EmailHeader> headers = new ArrayList<>();
+    //@Convert(converter = EmailHeadersConverter.class)
+    @Type(JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> headers= new HashMap<>();
 
     @Column(columnDefinition = "TEXT")
     private String body;

@@ -4,14 +4,12 @@ import com.aerosecgeek.emailthreatlensservice.core.event.EventPublisher;
 import com.aerosecgeek.emailthreatlensservice.core.event.model.EmailSavedEvent;
 import com.aerosecgeek.emailthreatlensservice.core.exception.AttachmentIsEmail;
 import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
-import com.aerosecgeek.emailthreatlensservice.modules.email.model.EmailHeader;
 import jakarta.mail.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Enumeration;
@@ -76,14 +74,17 @@ public class InboxFetcherService {
         try {
             Email email = new Email();
             email.setSubject(message.getSubject());
-            email.setFromAddress(message.getFrom()[0].toString());
-            email.setToAddress(message.getAllRecipients()[0].toString());
+            if (message.getFrom()!=null && message.getFrom().length > 0){
+                email.setFromAddress(message.getFrom()[0].toString());
+            }
+            if(message.getAllRecipients()!=null && message.getAllRecipients().length>0){
+                email.setToAddress(message.getAllRecipients()[0].toString());
+            }
 
             // Extract and save headers
             for (Enumeration<Header> e = message.getAllHeaders(); e.hasMoreElements();) {
                 Header header = e.nextElement();
-                EmailHeader emailHeader = new EmailHeader(header.getName(), header.getValue(),email);
-                email.getHeaders().add(emailHeader);
+                email.getHeaders().put(header.getName(), header.getValue());
             }
 
             Date receivedDate = message.getReceivedDate();
