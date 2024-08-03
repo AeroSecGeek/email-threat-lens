@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serial;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 
 @Embeddable
 @Data
+@AllArgsConstructor
 public class AnalysisResult implements Serializable {
     @Serial
     private static final long serialVersionUID = -5158298565550124430L;
@@ -25,8 +27,10 @@ public class AnalysisResult implements Serializable {
     private String description;
 
     public AnalysisResult() {
-        this.status = AnalysisStatus.PENDING;
-        this.outcome = AnalysisOutcome.UNKNOWN;
-        this.description = "";
+        this(AnalysisStatus.PENDING, AnalysisOutcome.UNKNOWN, "");
+    }
+
+    public AnalysisResult(AnalysisStatus status, AnalysisOutcome outcome) {
+        this(status, outcome, "");
     }
 }

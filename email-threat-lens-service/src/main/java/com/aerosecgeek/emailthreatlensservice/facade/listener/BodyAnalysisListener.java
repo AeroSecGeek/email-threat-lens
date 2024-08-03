@@ -5,6 +5,8 @@ import com.aerosecgeek.emailthreatlensservice.core.event.model.AnalysisCompleted
 import com.aerosecgeek.emailthreatlensservice.core.event.model.StartAnalysisEvent;
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.OverallEmailAnalysisResultService;
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.body.BodyAnalysisService;
+import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.AnalysisResult;
+import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.AnalysisResultType;
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.AnalysisStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -22,14 +24,13 @@ public class BodyAnalysisListener {
     @Async
     public void handleStartAnalysisEvent(StartAnalysisEvent event){
         var result = event.getResult();
-        result.getBodyAnalysisResult().setStatus(AnalysisStatus.IN_PROGRESS);
-        result = overallEmailAnalysisResultService.saveResult(result);
+        overallEmailAnalysisResultService.updateAnalysisStatus(result.getUuid(),
+                AnalysisResultType.BODY, AnalysisStatus.IN_PROGRESS);
 
-        var analysisResult = bodyAnalysisService.analyzeContent(result);
-        result.getBodyAnalysisResult().setStatus(AnalysisStatus.COMPLETED);
-        result.getBodyAnalysisResult().setOutcome(analysisResult);
-        overallEmailAnalysisResultService.saveResult(result);
+        var analysisOutcome = bodyAnalysisService.analyzeContent(result.getEmail());
+        var analysisResult = new AnalysisResult(AnalysisStatus.COMPLETED, analysisOutcome);
+        overallEmailAnalysisResultService.updateAnalysisResult(result.getUuid(), analysisResult, AnalysisResultType.BODY);
 
-        eventPublisher.publishDomainEvent(new AnalysisCompletedEvent(this, result));
+        eventPublisher.publishDomainEvent(new AnalysisCompletedEvent(this, result.getUuid()));
     }
 }

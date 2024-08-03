@@ -57,4 +57,19 @@ class OverallEmailAnalysisResultServiceTest {
         assertEquals(AnalysisOutcome.CLEAN,savedResult.getHeaderAnalysisResult().getOutcome());
     }
 
+    @Test
+    void givenUuid_whenGetResultByUuid_thenResultReturned(){
+        // given
+        Email email = new Email();
+        var result = overallEmailAnalysisResultService.createNewResult(email);
+        var savedResult = overallEmailAnalysisResultService.saveResult(result);
+
+        // when
+        var fetchedResult = overallEmailAnalysisResultService.getResultByUuid(savedResult.getUuid());
+
+        // then
+        assertNotNull(fetchedResult);
+        assertEquals(savedResult.getUuid(),fetchedResult.getUuid());
+    }
+
 }
