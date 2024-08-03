@@ -3,6 +3,7 @@ package com.aerosecgeek.emailthreatlensservice.modules.email;
 import com.aerosecgeek.emailthreatlensservice.core.event.EventPublisher;
 import com.aerosecgeek.emailthreatlensservice.core.event.model.EmailSavedEvent;
 import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
+import com.aerosecgeek.emailthreatlensservice.modules.util.AbstractIntegrationTest;
 import jakarta.mail.Address;
 import jakarta.mail.Header;
 import jakarta.mail.Message;
@@ -12,10 +13,6 @@ import jakarta.mail.internet.InternetAddress;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -25,13 +22,9 @@ import java.util.Enumeration;
 
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("unittest")
-@Transactional
-@Rollback
-class InboxFetcherServiceTest {
+class InboxFetcherServiceTest extends AbstractIntegrationTest {
     @Mock
-    private EmailRepository emailRepository;
+    private EmailService emailService;
 
     @Mock
     private EventPublisher eventPublisher;
@@ -56,7 +49,7 @@ class InboxFetcherServiceTest {
         inboxFetcherService.saveEmail(message);
 
         // then
-        verify(emailRepository, times(1)).save(any(Email.class));
+        verify(emailService, times(1)).saveEmail(any(Email.class));
         verify(eventPublisher, times(1)).publishDomainEvent(any(EmailSavedEvent.class));
     }
 

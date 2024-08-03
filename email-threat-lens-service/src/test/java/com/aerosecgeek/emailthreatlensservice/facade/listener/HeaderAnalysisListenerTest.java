@@ -5,6 +5,7 @@ import com.aerosecgeek.emailthreatlensservice.modules.analysis.OverallEmailAnaly
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.OverallEmailAnalysisResult;
 import com.aerosecgeek.emailthreatlensservice.modules.email.EmailRepository;
 import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
+import com.aerosecgeek.emailthreatlensservice.modules.util.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.verify;
 @ActiveProfiles("unittest")
 @Transactional
 @Rollback
-class HeaderAnalysisListenerTest {
+class HeaderAnalysisListenerTest extends AbstractIntegrationTest {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -39,7 +40,7 @@ class HeaderAnalysisListenerTest {
     private OverallEmailAnalysisResultService overallEmailAnalysisResultService;
 
     @Test
-    void givenStartAnalysisEvent_whenHandleStartAnalysisEvent_thenMethodTriggered() throws Exception {
+    void givenStartAnalysisEvent_whenHandleStartAnalysisEvent_thenMethodTriggered() {
         // given
         var overallResult = new OverallEmailAnalysisResult();
         Email email = new Email();

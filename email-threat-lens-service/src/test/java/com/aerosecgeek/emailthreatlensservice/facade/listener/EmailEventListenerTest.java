@@ -1,29 +1,24 @@
 package com.aerosecgeek.emailthreatlensservice.facade.listener;
 
+import com.aerosecgeek.emailthreatlensservice.core.event.EventPublisher;
 import com.aerosecgeek.emailthreatlensservice.core.event.model.EmailSavedEvent;
+import com.aerosecgeek.emailthreatlensservice.modules.email.EmailService;
 import com.aerosecgeek.emailthreatlensservice.modules.email.model.Email;
+import com.aerosecgeek.emailthreatlensservice.modules.util.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("unittest")
-@Transactional
-@Rollback
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-class EmailEventListenerTest {
+class EmailEventListenerTest extends AbstractIntegrationTest {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private EventPublisher eventPublisher;
+
+    @Autowired
+    private EmailService emailService;
 
     @SpyBean
     private EmailEventListener emailEventListener;
@@ -32,12 +27,14 @@ class EmailEventListenerTest {
     void givenEmailSavedEvent_whenHandleEmailSavedEvent_thenLog() {
         // given
         Email email = new Email();
-        String emailAddress = "test@test.com";
+        String emailAddress = "test@example.com";
         email.setFromAddress(emailAddress);
-        EmailSavedEvent emailSavedEvent = new EmailSavedEvent(this,email);
+        email = emailService.saveEmail(email);
+
+        EmailSavedEvent emailSavedEvent = new EmailSavedEvent(this, email);
 
         // when
-        eventPublisher.publishEvent(emailSavedEvent);
+        eventPublisher.publishDomainEvent(emailSavedEvent);
 
         // then
         // Verify the listener was triggered

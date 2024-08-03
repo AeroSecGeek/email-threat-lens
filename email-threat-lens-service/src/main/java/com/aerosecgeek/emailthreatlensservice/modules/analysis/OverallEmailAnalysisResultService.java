@@ -20,9 +20,10 @@ public class OverallEmailAnalysisResultService {
 
     private final Object lock = new Object();
 
+    @Transactional
     public OverallEmailAnalysisResult createNewResult(Email email){
         OverallEmailAnalysisResult result = new OverallEmailAnalysisResult(email);
-        return overallEmailAnalysisResultRepository.save(result);
+        return saveResult(result);
     }
 
     public OverallEmailAnalysisResult saveResult(OverallEmailAnalysisResult result){

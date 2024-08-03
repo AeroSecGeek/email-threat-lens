@@ -34,14 +34,14 @@ public class InboxFetcherService {
     @Value("${mail.imap.protocol}")
     private String imapProtocol;
 
-    private final EmailRepository emailRepository;
+    private final EmailService emailService;
     private final EventPublisher eventPublisher;
 
     private final Logger logger = LoggerFactory.getLogger(InboxFetcherService.class);
 
     @Autowired
-    public InboxFetcherService(EmailRepository emailRepository, EventPublisher eventPublisher) {
-        this.emailRepository = emailRepository;
+    public InboxFetcherService(EmailService emailService, EventPublisher eventPublisher) {
+        this.emailService = emailService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -104,7 +104,7 @@ public class InboxFetcherService {
     private void handleEmailContent(Message message, Email email) throws Exception {
         try {
             email.setBody(extractContent(message));
-            email=emailRepository.save(email);
+            email=emailService.saveEmail(email);
             eventPublisher.publishDomainEvent(new EmailSavedEvent(this, email));
         } catch (AttachmentIsEmail e) {
             // Do nothing
