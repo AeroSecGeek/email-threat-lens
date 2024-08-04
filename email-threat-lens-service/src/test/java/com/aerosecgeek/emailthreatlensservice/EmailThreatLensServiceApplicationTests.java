@@ -2,7 +2,7 @@ package com.aerosecgeek.emailthreatlensservice;
 
 import com.aerosecgeek.emailthreatlensservice.modules.email.InboxFetcherService;
 import com.aerosecgeek.emailthreatlensservice.modules.util.AbstractIntegrationTest;
-import com.aerosecgeek.emailthreatlensservice.modules.util.MessageExample;
+import com.aerosecgeek.emailthreatlensservice.modules.testdata.MessageExample;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.Test;

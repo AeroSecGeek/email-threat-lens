@@ -27,16 +27,28 @@ public class LinkExtractor {
             Document doc = Jsoup.parse(body);
             Elements anchorTags = doc.select("a[href]");
             for (Element element : anchorTags) {
+                if (element.attr("href").startsWith("mailto:")) {
+                    continue;
+                }
                 links.add(element.attr("href"));
             }
         } else {
             // Extract links using regex for plain text
             Matcher matcher = URL_PATTERN.matcher(body);
             while (matcher.find()) {
-                links.add(matcher.group());
+                String link = matcher.group();
+                if (link.startsWith("[") || link.startsWith("<")) {
+                    link = link.substring(1);
+                }
+                if (link.endsWith("]") || link.endsWith(">")|| link.endsWith("\"")) {
+                    link = link.substring(0, link.length() - 1);
+                }
+                if(link.contains("\">")){
+                    link = link.substring(0, link.indexOf("\">"));
+                }
+                links.add(link);
             }
         }
-
         return links;
     }
 }

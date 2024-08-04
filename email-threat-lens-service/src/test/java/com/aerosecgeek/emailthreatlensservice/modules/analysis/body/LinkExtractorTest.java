@@ -57,4 +57,16 @@ class LinkExtractorTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    void givenHtmlWithMailtoLink_whenExtractLinks_thenReturnEmptyList() {
+        // given
+        String body = "<html><body><a href=\"mailto:test@test.com\">Email me</a></body></html>";
+
+        // when
+        var result = LinkExtractor.extractLinks(body, true);
+
+        // then
+        assertTrue(result.isEmpty());
+    }
+
 }

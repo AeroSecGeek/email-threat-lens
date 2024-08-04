@@ -1,4 +1,4 @@
-package com.aerosecgeek.emailthreatlensservice.modules.util;
+package com.aerosecgeek.emailthreatlensservice.modules.testdata;
 
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
