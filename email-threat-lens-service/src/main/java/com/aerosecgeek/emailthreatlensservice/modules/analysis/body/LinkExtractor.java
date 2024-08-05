@@ -51,4 +51,10 @@ public class LinkExtractor {
         }
         return links;
     }
+
+    public static boolean isBodyHtml(String body) {
+        return body.contains("<html") || body.contains("<body>")
+                || body.contains("<head>")
+                || body.contains("<!DOCTYPE html");
+    }
 }

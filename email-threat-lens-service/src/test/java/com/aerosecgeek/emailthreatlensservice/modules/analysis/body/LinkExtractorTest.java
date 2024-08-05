@@ -1,5 +1,6 @@
 package com.aerosecgeek.emailthreatlensservice.modules.analysis.body;
 
+import com.aerosecgeek.emailthreatlensservice.modules.testdata.MessageExample;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,6 +68,18 @@ class LinkExtractorTest {
 
         // then
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void givenHtmlBlock_whenIsBodyHtml_thenReturnTrue() {
+        // given
+        String body = MessageExample.getHtmlContent();
+
+        // when
+        var result = LinkExtractor.isBodyHtml(body);
+
+        // then
+        assertTrue(result);
     }
 
 }

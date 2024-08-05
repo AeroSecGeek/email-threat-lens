@@ -23,3 +23,12 @@ CREATE TABLE IF NOT EXISTS overall_email_analysis_result (
                                                              header_status VARCHAR(50),
                                                              FOREIGN KEY (email_uuid) REFERENCES email (uuid)
 );
+
+CREATE TABLE IF NOT EXISTS virus_total_analysis_result (
+                                                           uuid UUID PRIMARY KEY,
+                                                           analysis_id VARCHAR(255),
+                                                           url TEXT,
+                                                           completed BOOLEAN,
+                                                           last_scan_date TIMESTAMP,
+                                                           outcome VARCHAR(50)
+);

@@ -2,6 +2,8 @@ package com.aerosecgeek.emailthreatlensservice.modules.virustotal;
 
 import com.aerosecgeek.emailthreatlensservice.core.exception.AnalysisFailedException;
 import com.aerosecgeek.emailthreatlensservice.modules.analysis.model.AnalysisOutcome;
+import com.aerosecgeek.emailthreatlensservice.modules.util.DateUtils;
+import com.aerosecgeek.emailthreatlensservice.modules.virustotal.model.VirusTotalAnalysisResult;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -26,10 +29,13 @@ public class VirusTotalService {
     private String baseUrl = "https://www.virustotal.com";
 
     private final WebClient.Builder webClientBuilder;
+    private final VirusTotalAnalysisResultRepository virusTotalAnalysisResultRepository;
 
     @Autowired
-    public VirusTotalService(WebClient.Builder webClientBuilder) {
+    public VirusTotalService(WebClient.Builder webClientBuilder,
+                             VirusTotalAnalysisResultRepository virusTotalAnalysisResultRepository) {
         this.webClientBuilder = webClientBuilder;
+        this.virusTotalAnalysisResultRepository = virusTotalAnalysisResultRepository;
     }
 
     public AnalysisOutcome getUrlAnalysisReport(String analysisId) {
@@ -66,9 +72,28 @@ public class VirusTotalService {
         return getAnalysisIdFromResponse(response.getBody());
     }
 
-    public AnalysisOutcome triggerAndWaitForUrlAnalysis(String url) throws InterruptedException {
+    public AnalysisOutcome getOutcomeForUrl(String url) throws InterruptedException {
+        VirusTotalAnalysisResult existingResult = findResultForUrl(url);
+        if (existingResult != null &&
+                existingResult.isCompleted() &&
+                !DateUtils.isOlderThan24Hours(existingResult.getLastScanDate())) {
+            return existingResult.getOutcome();
+        } else {
+            existingResult = triggerAndWaitForUrlAnalysis(url, existingResult);
+        }
+        virusTotalAnalysisResultRepository.save(existingResult);
+        return existingResult.getOutcome();
+    }
+
+    public VirusTotalAnalysisResult triggerAndWaitForUrlAnalysis(String url, VirusTotalAnalysisResult existingResult) throws InterruptedException {
+        if(existingResult == null) {
+            existingResult = new VirusTotalAnalysisResult();
+            existingResult.setUrl(url);
+        }
         log.info("Triggering URL analysis for {}", url);
         String analysisId = triggerUrlScan(url);
+        existingResult.setAnalysisId(analysisId);
+        existingResult.setCompleted(false);
         AnalysisOutcome outcome = null;
         int maxRetries = 60;
         int retryCount = 0;
@@ -85,7 +110,14 @@ public class VirusTotalService {
         if (outcome == null) {
             throw new AnalysisFailedException("VirusTotal analysis timed out");
         }
-        return outcome;
+        existingResult.setOutcome(outcome);
+        existingResult.setLastScanDate(new Date());
+        existingResult.setCompleted(true);
+        return existingResult;
+    }
+
+    public VirusTotalAnalysisResult findResultForUrl(String url) {
+        return virusTotalAnalysisResultRepository.findByUrl(url).orElse(null);
     }
 
     private AnalysisOutcome analyzeResponse(String responseBody) {

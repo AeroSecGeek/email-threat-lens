@@ -17,7 +17,7 @@ public class BodyAnalysisService {
 
     public AnalysisOutcome analyzeContent(Email email) {
         List<String> containedUrls = LinkExtractor.extractLinks(email.getBody(),
-                isBodyHtml(email.getBody()));
+                LinkExtractor.isBodyHtml(email.getBody()));
         if(containedUrls.isEmpty()) {
             return AnalysisOutcome.CLEAN;
         }
@@ -25,7 +25,7 @@ public class BodyAnalysisService {
             List<AnalysisOutcome> outcomes = new ArrayList<>();
             for (String url : containedUrls) {
                 try {
-                    outcomes.add(virusTotalService.triggerAndWaitForUrlAnalysis(url));
+                    outcomes.add(virusTotalService.getOutcomeForUrl(url));
                 } catch (InterruptedException e) {
                     log.error("Error while waiting for URL analysis", e);
                     Thread.currentThread().interrupt();
@@ -33,10 +33,6 @@ public class BodyAnalysisService {
             }
             return analyzeOutcomes(outcomes);
         }
-    }
-
-    private boolean isBodyHtml(String body) {
-        return body.contains("<html>") || body.contains("<body>");
     }
 
     private AnalysisOutcome analyzeOutcomes(List<AnalysisOutcome> outcomes) {
